@@ -44,23 +44,71 @@ You can change the default options for all APIs globally by mutating the
 
 All `API` service requests return plain objects of the request body.
 
-#### `service.read(id, params, callback)`
+#### `service.read(id, params?, callback)`
 
-#### `service.readMany(ids, params, callback)`
+```js
+api.flow.read('<flow_id>', function(err, res) { ... });
+```
 
-#### `service.findMany(params, callback)`
+#### `service.readMany(ids, params?, callback)`
+
+```js
+api.flow.readMany(['<flow_id_1>', '<flow_id_2>'], function(err, res) { ... });
+```
+
+#### `service.findMany(params?, callback)`
+
+```js
+api.flow.findMany({ filter: { path: '/foo/bar' }}, function(err, res) { ... });
+```
 
 #### `service.find(..., callback)`
 
-#### `service.create(model, params, callback)`
+An overloaded method which may call one of `read`, `readMany`, or `findMany`
+depending upon the type of the first argument.
 
-#### `service.update(model, params, callback)`
+#### `service.create(model, params?, callback)`
 
-#### `service.updateMany(models, params, callback)`
+```js
+api.flow.create({ path: '/foo/bar' }, function(err, res) { ... });
+```
 
-#### `service.save(..., params, callback)`
+#### `service.update(model, params?, callback)`
 
-#### `service.delete(id, params, data, callback)`
+Requests are made based on the model's `id` property.
+
+```js
+api.flow.update({ id: '<flow_id>', capacity: 10 }, function(err, res) { ... });
+```
+
+#### `service.updateMany(models, params?, callback)`
+
+```js
+api.flow.updateMany([model1, model2, model3], function(err, res) { ... });
+```
+
+#### `service.save(..., params?, callback)`
+
+An overloaded method which may call one of `create`, `update`, or `updateMany`
+depending upon the type of the first argument. `create` or `update` are called
+based on the presence of an `id` property.
+
+#### `service.delete(id, params?, data?, callback)`
+
+```js
+api.flow.delete('<flow_id>', function(err, res) { ... });
+```
+
+**Note:** The `drop` service is slightly different in that it must first be
+parameterized by the Flow id.
+
+```js
+api.drop('<flow_id>').find({ limit: 10 });
+```
+
+**Note:** Not all services support all the methods. `share`s and `token`s are
+immutable, and so do not support `update`, `updateMany`, and `save`.
+`identity` only supports `read`, `readMany`, `findMany`, and `find`.
 
 ### Request Parameters
 
@@ -79,7 +127,7 @@ Request `filter`s may be expressed using a Mongo-like DSL:
 
 ```js
 api.flow.find({
-  filter: {
+  criteria: {
     prop1: 'foo',       // equals
     prop2: /foo/i,      // regular expression matching
     prop3: { $lt: 42 },  // Less than
@@ -91,6 +139,9 @@ api.flow.find({
   // ...
 });
 ```
+
+Other parameters are not fixed in any way, so please refer to the platform
+documentation for more.
 
 ### Errors
 
