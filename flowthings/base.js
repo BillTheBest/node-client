@@ -20,7 +20,7 @@ BaseService.prototype._mkData = function(req) {
 };
 
 BaseService.prototype._mkParams = function(req) {
-  return extend({}, this.params, util.mkParams(req.params));
+  return extend({}, this.params, req.params && util.mkParams(req.params));
 };
 
 BaseService.prototype._mkRequest = function(req, cb) {
