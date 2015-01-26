@@ -2,8 +2,8 @@
 
 var clone = require('lodash.clone');
 var forEach = require('lodash.foreach');
-var isString = require('lodash.isString');
-var isRegExp = require('lodash.isRegExp');
+var isString = require('lodash.isstring');
+var isRegExp = require('lodash.isregexp');
 var err = require('./errors');
 
 exports.mkHeaders = function(opts) {
