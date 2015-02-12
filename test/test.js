@@ -128,12 +128,12 @@ describe('requests', function() {
       refs: true,
       limit: 10,
       only: ['name', 'path'],
-      criteria: {
+      filter: {
         one: 1,
-        two: { lt: 2 },
-        three: { lte: 3 },
-        four: { gt: 4 },
-        five: { gte: 5 },
+        two: { $lt: 2 },
+        three: { $lte: 3 },
+        four: { $gt: 4 },
+        five: { $gte: 5 },
         six: /6/gim
       }
     }, function(err, resp) {
@@ -145,22 +145,7 @@ describe('requests', function() {
           refs: 1,
           limit: 10,
           only: 'name,path',
-          criteria: {
-            one: 1,
-            two: {
-              lt: 2
-            },
-            three: {
-              lte: 3,
-            },
-            four: {
-              gt: 4
-            },
-            five: {
-              gte: 5
-            },
-            six: /6/gim,
-          }
+          filter: "(one == 1)&&(two < 2)&&(three <= 3)&&(four > 4)&&(five >= 5)&&(six =~ /6/gim)"
         },
         data: null
       })(null, resp[0]);
