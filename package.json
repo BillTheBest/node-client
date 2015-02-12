@@ -4,21 +4,24 @@
   "description": "",
   "main": "./flowthings/index.js",
   "scripts": {
-    "lint": "eslint flowthings || exit 0"
+    "lint": "eslint flowthings || exit 0",
+    "test": "mocha"
   },
   "author": "flowthings <dev@flowthings.io> (https://github.com/flowthings/)",
   "license": "Apache 2.0",
   "dependencies": {
     "lodash.assign": "^2.4.1",
-    "lodash.foreach": "^2.4.1",
-    "lodash.partial": "^2.4.1",
     "lodash.clone": "^2.4.1",
-    "lodash.map": "^2.4.1",
+    "lodash.foreach": "^2.4.1",
     "lodash.isregexp": "^2.4.1",
-    "lodash.isstring": "^2.4.1"
+    "lodash.isstring": "^2.4.1",
+    "lodash.map": "^2.4.1",
+    "lodash.partial": "^2.4.1"
   },
   "devDependencies": {
-    "eslint": "^0.12.0"
+    "chai": "^2.0.0",
+    "eslint": "^0.12.0",
+    "mocha": "^2.1.0"
   },
   "eslintConfig": {
     "env": {
