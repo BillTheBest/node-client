@@ -2,6 +2,8 @@
 
 var extend = require('lodash.assign');
 var util = require('./util');
+var WebSocket = require('ws');
+var wsUtil = require('./websocket.js');
 
 function BaseService(path, opts) {
   this.path = path;
@@ -36,6 +38,12 @@ BaseService.prototype._mkRequest = function(req, cb) {
     data: this._mkData(req),
     params: params
   }, function(err, status, headers, data) {
+    if (opts.wsCb) {
+      if (!err) {
+        opts.wsCb(null, data);
+      }
+    }
+
     if (cb) {
       if (err) {
         cb(err);
@@ -67,4 +75,14 @@ exports.serviceFactory = function(path, mixins, opts) {
   return function(context) {
     return exports.service(path + '/' + context, mixins, opts);
   };
+};
+
+exports.webSocketService = function(path, opts) {
+  opts.hostname = 'ws.flowthings.io';
+  opts.secure = true;
+  opts.path = "/session";
+
+  opts.wsCb = wsUtil.mkWsCb();
+
+  return extend.apply(null, [new BaseService(path, opts)].concat(mixins));
 };

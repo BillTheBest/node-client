@@ -39,7 +39,8 @@ var defaults = {
     mqtt: partial(base.service, '/mqtt', [mixins.crudable]),
     identity: partial(base.service, '/identity', [mixins.findable]),
     share: partial(base.service, '/share', [mixins.findable, mixins.creatable, mixins.deletable]),
-    token: partial(base.service, '/token', [mixins.findable, mixins.creatable, mixins.deletable])
+    token: partial(base.service, '/token', [mixins.findable, mixins.creatable, mixins.deletable]),
+    webSocket: partial(base.webSocketService, '/session', []),
   }
 };
 
