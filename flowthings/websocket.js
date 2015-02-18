@@ -6,25 +6,20 @@ function BaseWs() {
 
 }
 
-exports.mkWsCb = function() {
-  return function(err, data, cb) {
-    if (err) return console.log(err);
+exports.wsCb = function(err, data, cb) {
+  if (err) return console.log(err);
 
-    var opts = this.options;
-    var baseUrl = 'wss://ws.flowthings.io/session/';
-    var sessionId = data.body.id;
-    var url = "";
+  var opts = this.options;
+  var url = opts.wsHostname;
+  var sessionId = data.body.id;
 
-    this.opts = this.options;
+  if (opts.secure) {
+    url = 'wss://' + url;
+  } else {
+    url = 'ws://' + url;
+  }
 
-    if (opts.polling) {
-      url = baseUrl + sessionId + '/polling';
-    } else if (opts.streaming) {
-      url = baseUrl + sessionId + '/streaming';
-    } else {
-      url = baseUrl + sessionId + '/ws';
-    }
+  url += sessionId + '/ws';
 
-    return new WebSocket(url);
-  };
+  return new WebSocket(url);
 };

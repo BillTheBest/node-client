@@ -27,6 +27,7 @@ var defaults = {
   request: apiRequest,
   secure: true,
   hostname: 'api.flowthings.io',
+  wsHostname: 'ws.flowthings.io',
   version: '0.1',
   encoder: JSON,
   services: {

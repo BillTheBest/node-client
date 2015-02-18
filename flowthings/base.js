@@ -78,11 +78,9 @@ exports.serviceFactory = function(path, mixins, opts) {
 };
 
 exports.webSocketService = function(path, opts) {
-  opts.hostname = 'ws.flowthings.io';
-  opts.secure = true;
-  opts.path = "/session";
+  opts.hostname = opts.wsHostname;
 
-  opts.wsCb = wsUtil.mkWsCb();
+  opts.wsCb = wsUtil.wsCb;
 
   return extend.apply(null, [new BaseService(path, opts)].concat(mixins));
 };
