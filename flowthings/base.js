@@ -4,6 +4,7 @@ var extend = require('lodash.assign');
 var util = require('./util');
 var WebSocket = require('ws');
 var wsUtil = require('./websocket.js');
+var clone = require('lodash.clone');
 
 function BaseService(path, opts) {
   this.path = path;
@@ -11,6 +12,8 @@ function BaseService(path, opts) {
 }
 
 BaseService.prototype._mkPath = function(req) {
+  if (this.options.ws == true) return this.path;
+
   return '/v' + this.options.version
        + '/' + this.options.creds.account
        + this.path
@@ -29,6 +32,10 @@ BaseService.prototype._mkRequest = function(req, cb) {
   var params = this._mkParams(req);
   var opts = this.options;
 
+  if (opts.ws) {
+    opts.hostname = opts.wsHostname;
+  }
+
   return opts.request({
     creds: opts.creds,
     secure: opts.secure,
@@ -38,13 +45,13 @@ BaseService.prototype._mkRequest = function(req, cb) {
     data: this._mkData(req),
     params: params
   }, function(err, status, headers, data) {
-    if (opts.wsCb) {
-      if (!err) {
-        opts.wsCb(null, data);
-      }
-    }
 
-    if (cb) {
+    if (opts.ws) {
+      if (!err) {
+        data = opts.encoder.parse(data);
+        opts.wsCb(null, data, cb, opts);
+      }
+    } else if (cb) {
       if (err) {
         cb(err);
       } else {
@@ -77,10 +84,11 @@ exports.serviceFactory = function(path, mixins, opts) {
   };
 };
 
-exports.webSocketService = function(path, opts) {
-  opts.hostname = opts.wsHostname;
+exports.webSocketService = function(path, mixins, opts) {
+  var cloneOpts = clone(opts, true);
 
-  opts.wsCb = wsUtil.wsCb;
+  cloneOpts.ws = true;
+  cloneOpts.wsCb = wsUtil.wsCb;
 
-  return extend.apply(null, [new BaseService(path, opts)].concat(mixins));
+  return extend.apply(null, [new BaseService(path, cloneOpts)].concat(mixins));
 };

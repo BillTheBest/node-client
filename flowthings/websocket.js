@@ -9,7 +9,7 @@ function BaseWs() {
 exports.wsCb = function(err, data, cb) {
   if (err) return console.log(err);
 
-  var opts = this.options;
+  var opts = this;
   var url = opts.wsHostname;
   var sessionId = data.body.id;
 
@@ -19,7 +19,28 @@ exports.wsCb = function(err, data, cb) {
     url = 'ws://' + url;
   }
 
-  url += sessionId + '/ws';
+  url += '/session/' + sessionId + '/ws';
 
-  return new WebSocket(url);
+  var ws = new WebSocket(url);
+
+  if (cb) {
+    cb(ws);
+  };
+};
+
+
+exports.connectable = {
+  connect: function(data, params, cb) {
+    if (typeof data === 'function') {
+      cb = data; data = null; params = null;
+    } else if (typeof params === 'function') {
+      cb = params; params = null;
+    }
+
+    return this.request({
+      method: 'POST',
+      path: '',
+      data: data,
+      params: params}, cb);
+  }
 };
