@@ -16,7 +16,8 @@
     "lodash.isregexp": "^2.4.1",
     "lodash.isstring": "^2.4.1",
     "lodash.map": "^2.4.1",
-    "lodash.partial": "^2.4.1"
+    "lodash.partial": "^2.4.1",
+    "ws": "^0.7.1"
   },
   "devDependencies": {
     "chai": "^2.0.0",

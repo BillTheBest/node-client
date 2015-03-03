@@ -9,6 +9,7 @@ var map = require('lodash.map');
 var base = require('./base');
 var mixins = require('./mixins');
 var util = require('./util');
+var wsUtils = require('./websocket.js');
 
 function API(creds, opts) {
   if (!(this instanceof API)) {
@@ -27,6 +28,7 @@ var defaults = {
   request: apiRequest,
   secure: true,
   hostname: 'api.flowthings.io',
+  wsHostname: 'ws.flowthings.io',
   version: '0.1',
   encoder: JSON,
   services: {
@@ -39,7 +41,8 @@ var defaults = {
     mqtt: partial(base.service, '/mqtt', [mixins.crudable]),
     identity: partial(base.service, '/identity', [mixins.findable]),
     share: partial(base.service, '/share', [mixins.findable, mixins.creatable, mixins.deletable]),
-    token: partial(base.service, '/token', [mixins.findable, mixins.creatable, mixins.deletable])
+    token: partial(base.service, '/token', [mixins.findable, mixins.creatable, mixins.deletable]),
+    webSocket: partial(base.webSocketService, '/session', [wsUtils.connectable]),
   }
 };
 
