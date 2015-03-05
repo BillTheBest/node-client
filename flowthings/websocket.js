@@ -46,6 +46,10 @@ var crudable = {
       value: obj
     };
 
+    if (this.objectType === "drop") {
+
+    }
+
     data = JSON.stringify(data);
 
     if (flowthingsWs.readyState === flowthingsWs.OPEN) {
@@ -198,6 +202,58 @@ var crudable = {
     }
   }
 };
+
+var dropCreate = {
+  create: function(id, obj, params, listener, cb) {
+    if (typeof params === 'function') {
+      cb = listener;
+      listener = params;
+      params = {};
+    } else if (!params) {
+      params = {};
+    }
+
+    var msgId;
+    if (params.msgId) {
+      msgId = params.msgId;
+    } else {
+      msgId = flowthingsWs.baseMsgId; flowthingsWs.baseMsgId += 1;
+    }
+
+    var data = {
+      msgId: msgId,
+      object: this.objectType,
+      type: "create",
+      flowId: id,
+      value: obj
+    };
+
+    if (this.objectType === "drop") {
+
+    }
+
+    data = JSON.stringify(data);
+
+    if (flowthingsWs.readyState === flowthingsWs.OPEN) {
+      flowthingsWs.send(data, {}, cb);
+    } else {
+      flowthingsWs.on('open', function open() {
+        flowthingsWs.send(data, {}, cb);
+      });
+    }
+
+    if (listener) {
+      flowthingsWs.on('message', function(data, flags) {
+        var response = JSON.parse(data);
+        if (response.head && response.head.msgId === msgId) {
+          listener(response, msgId, flags);
+        }
+      });
+    }
+
+
+  },
+}
 
 var subscribable = {
   subscribe: function(id, params, messageHandler, cb, listener) {

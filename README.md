@@ -179,3 +179,88 @@ api.flow.find()
     // ...
   });
 ```
+
+### Websockets
+
+Websockets is supported through the node library.
+
+Note: As of yet, we do not support promises through the websockets library.
+
+You can enable a websockets session with the websockets connect method,
+as you would with any other service.
+
+```js
+
+api.webSocket.connect()
+
+```
+
+The connection method doesn't return anything.
+
+Rather, you can interface with the websocket connection through a callback.
+
+The callback takes one argument, which gives you access to the websocket object. We've used the [ws](https://github.com/websockets/ws) library to handle our websockets, so you can use any of their methods that you wish. But, we've also added our own convenience methods.
+
+```js
+
+api.webSocket.connect(function(flowthingsWs) {
+
+  // To subscribe to a flow, you could use the built in ws methods.
+  flowthingsWs.on('open', function open() {
+    flowthingsWs.send('{"msgId": "my-request","object": "drop","type": "subscribe","flowId": "f54f8c0840cf2738763fd8a56"}');
+  });
+
+  // However, you could also use our convenience methods.
+  flowthingsWs.flow.subscribe("f54f8c0840cf2738763fd8a56")
+
+})
+
+```
+
+Flow, track and drop each have CRUD methods on them. Flow has an additional method to subscribe to the flow over websockets.
+
+The methods take the following arguments:
+
+```js
+ws.flow.subscribe(id, params, messageHandler, callback, listener)
+```
+
+* id is the id of the flow you're subscribing to.
+* params are various parameters you can set (the only important one for now is msgId).
+* messageHandler is a callback function, we'll execute it when messages (drops) come in from the subscribed to flow.
+* callback is the callback that is executed after the data is sent, but before anything is recieved.
+* listener will listen for an incomming message from the platform that will tell you if the subscription has succeeded or failed.
+
+The other methods are similar:
+
+```js
+ws.flow.create(obj, params, listener, cb)
+```
+
+* obj is the object that you're creating.
+
+And the other arguments work the same as the subscription.
+
+Drop create is slightly different:
+
+```js
+ws.drop.create(id, obj, params, listener, cb)
+```
+
+* id is the flowId for drop.create.
+
+Then we have:
+
+```js
+ws.flow.read(id, params, listener, cb)
+```
+
+```js
+ws.flow.update(id, obj, params, listener, cb)
+```
+
+```js
+ws.flow.delete(id, params, listener, cb)
+```
+
+The arguments work generally as you would expect for each of these. Track and drop work the same as flow, however, drop takes an array for the id in read, update and delete: [flowId, dropId].
