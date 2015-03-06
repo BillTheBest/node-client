@@ -264,3 +264,5 @@ ws.flow.delete(id, params, listener, cb)
 ```
 
 The arguments work generally as you would expect for each of these. Track and drop work the same as flow, however, drop takes an array for the id in read, update and delete: [flowId, dropId].
+
+Note: There is currently a bug with how we set listeners. We need to fix this, but until then, set as few as possible. If you're setting too many, the system will warn you. We're going to fix this (I promise) in the next week or so.
