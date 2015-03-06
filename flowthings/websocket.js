@@ -256,10 +256,10 @@ var dropCreate = {
 };
 
 var subscribable = {
-  subscribe: function(id, params, dropListener, cb, responseHandler) {
+  subscribe: function(id, params, dropListener, responseHandler, cb) {
     if (typeof params === 'function') {
-      responseHandler = cb;
-      cb = dropListener;
+      cb = responseHandler;
+      responseHandler = dropListener;
       dropListener = params;
       params = {};
     } else if (!params) {
