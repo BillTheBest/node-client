@@ -20,13 +20,13 @@ var flowthingsWs = {
 };
 
 var crudable = {
-  // Should the callback and the listener be the same
+  // Should the callback and the responseHandler be the same
   // or should they be different?
 
-  create: function(obj, params, listener, cb) {
+  create: function(obj, params, responseHandler, cb) {
     if (typeof params === 'function') {
-      cb = listener;
-      listener = params;
+      cb = responseHandler;
+      responseHandler = params;
       params = {};
     } else if (!params) {
       params = {};
@@ -60,11 +60,11 @@ var crudable = {
       });
     }
 
-    if (listener) {
+    if (responseHandler) {
       flowthingsWs.on('message', function(data, flags) {
         var response = JSON.parse(data);
         if (response.head && response.head.msgId === msgId) {
-          listener(response, msgId, flags);
+          responseHandler(response, msgId, flags);
         }
       });
     }
@@ -72,10 +72,10 @@ var crudable = {
 
   },
 
-  read: function(id, params, listener, cb) {
+  read: function(id, params, responseHandler, cb) {
     if (typeof params === 'function') {
-      cb = listener;
-      listener = params;
+      cb = responseHandler;
+      responseHandler = params;
       params = {};
     } else if (!params) {
       params = {};
@@ -105,20 +105,20 @@ var crudable = {
       });
     }
 
-    if (listener) {
+    if (responseHandler) {
       flowthingsWs.on('message', function(data, flags) {
         var response = JSON.parse(data);
         if (response.head && response.head.msgId === msgId) {
-          listener(response, msgId, flags);
+          responseHandler(response, msgId, flags);
         }
       });
     }
   },
 
-  update: function(id, obj, params, listener, cb) {
+  update: function(id, obj, params, responseHandler, cb) {
     if (typeof params === 'function') {
-      cb = listener;
-      listener = params;
+      cb = responseHandler;
+      responseHandler = params;
       params = {};
     } else if (!params) {
       params = {};
@@ -149,20 +149,20 @@ var crudable = {
       });
     }
 
-    if (listener) {
+    if (responseHandler) {
       flowthingsWs.on('message', function(data, flags) {
         var response = JSON.parse(data);
         if (response.head && response.head.msgId === msgId) {
-          listener(response, msgId, flags);
+          responseHandler(response, msgId, flags);
         }
       });
     }
   },
 
-  delete: function(id, params, listener, cb) {
+  delete: function(id, params, responseHandler, cb) {
     if (typeof params === 'function') {
-      cb = listener;
-      listener = params;
+      cb = responseHandler;
+      responseHandler = params;
       params = {};
     } else if (!params) {
       params = {};
@@ -192,11 +192,11 @@ var crudable = {
       });
     }
 
-    if (listener) {
+    if (responseHandler) {
       flowthingsWs.on('message', function(data, flags) {
         var response = JSON.parse(data);
         if (response.head && response.head.msgId === msgId) {
-          listener(response, msgId, flags);
+          responseHandler(response, msgId, flags);
         }
       });
     }
@@ -204,10 +204,10 @@ var crudable = {
 };
 
 var dropCreate = {
-  create: function(id, obj, params, listener, cb) {
+  create: function(id, obj, params, responseHandler, cb) {
     if (typeof params === 'function') {
-      cb = listener;
-      listener = params;
+      cb = responseHandler;
+      responseHandler = params;
       params = {};
     } else if (!params) {
       params = {};
@@ -242,25 +242,25 @@ var dropCreate = {
       });
     }
 
-    if (listener) {
+    if (responseHandler) {
       flowthingsWs.on('message', function(data, flags) {
         var response = JSON.parse(data);
         if (response.head && response.head.msgId === msgId) {
-          listener(response, msgId, flags);
+          responseHandler(response, msgId, flags);
         }
       });
     }
 
 
   },
-}
+};
 
 var subscribable = {
-  subscribe: function(id, params, messageHandler, cb, listener) {
+  subscribe: function(id, params, dropListener, cb, responseHandler) {
     if (typeof params === 'function') {
-      listener = cb;
-      cb = messageHandler;
-      messageHandler = params;
+      responseHandler = cb;
+      cb = dropListener;
+      dropListener = params;
       params = {};
     } else if (!params) {
       params = {};
@@ -290,18 +290,18 @@ var subscribable = {
       });
     }
 
-    if (listener || messageHandler) {
+    if (responseHandler || dropListener) {
       flowthingsWs.on('message', function(data, flags) {
         var response = JSON.parse(data);
         if (response.type === "message" && response.resource === id) {
-          if (messageHandler) {
-            messageHandler(response, flags);
+          if (dropListener) {
+            dropListener(response, flags);
           }
         }
 
         if (response.head && response.head.msgId === msgId) {
-          if (listener) {
-            listener(response, msgId, flags);
+          if (responseHandler) {
+            responseHandler(response, msgId, flags);
           }
         }
       });
