@@ -222,19 +222,19 @@ Flow, track and drop each have CRUD methods on them. Flow has an additional meth
 The methods take the following arguments:
 
 ```js
-ws.flow.subscribe(id, params, messageHandler, callback, listener)
+ws.flow.subscribe(id, params, dropListener, callback, responseHandler)
 ```
 
 * id is the id of the flow you're subscribing to.
 * params are various parameters you can set (the only important one for now is msgId).
-* messageHandler is a callback function, we'll execute it when messages (drops) come in from the subscribed to flow.
+* dropListener is a callback function, we'll execute it when messages (drops) come in from the subscribed to flow.
 * callback is the callback that is executed after the data is sent, but before anything is recieved.
-* listener will listen for an incomming message from the platform that will tell you if the subscription has succeeded or failed.
+* responseHandler will listen for an incomming message from the platform that will tell you if the subscription has succeeded or failed.
 
 The other methods are similar:
 
 ```js
-ws.flow.create(obj, params, listener, cb)
+ws.flow.create(obj, params, responseHandler, cb)
 ```
 
 * obj is the object that you're creating.
@@ -244,7 +244,7 @@ And the other arguments work the same as the subscription.
 Drop create is slightly different:
 
 ```js
-ws.drop.create(id, obj, params, listener, cb)
+ws.drop.create(id, obj, params, responseHandler, cb)
 ```
 
 * id is the flowId for drop.create.
@@ -252,17 +252,17 @@ ws.drop.create(id, obj, params, listener, cb)
 Then we have:
 
 ```js
-ws.flow.read(id, params, listener, cb)
+ws.flow.read(id, params, responseHandler, cb)
 ```
 
 ```js
-ws.flow.update(id, obj, params, listener, cb)
+ws.flow.update(id, obj, params, responseHandler, cb)
 ```
 
 ```js
-ws.flow.delete(id, params, listener, cb)
+ws.flow.delete(id, params, responseHandler, cb)
 ```
 
 The arguments work generally as you would expect for each of these. Track and drop work the same as flow, however, drop takes an array for the id in read, update and delete: [flowId, dropId].
 
-Note: There is currently a bug with how we set listeners. We need to fix this, but until then, set as few as possible. If you're setting too many, the system will warn you. We're going to fix this (I promise) in the next week or so.
+Note: There is currently a bug with how we set listeners, it has the potential to cause a memory leak. We need to fix this, but until then, set as few as possible. If you're setting too many, the system will warn you. We're going to fix this (I promise) in the next week or so.
