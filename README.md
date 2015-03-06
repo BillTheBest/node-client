@@ -222,7 +222,7 @@ Flow, track and drop each have CRUD methods on them. Flow has an additional meth
 The methods take the following arguments:
 
 ```js
-ws.flow.subscribe(id, params, dropListener, callback, responseHandler)
+ws.flow.subscribe(id, params, dropListener, responseHandler, callback)
 ```
 
 * id is the id of the flow you're subscribing to.
@@ -234,7 +234,7 @@ ws.flow.subscribe(id, params, dropListener, callback, responseHandler)
 The other methods are similar:
 
 ```js
-ws.flow.create(obj, params, responseHandler, cb)
+ws.flow.create(obj, params, responseHandler, callback)
 ```
 
 * obj is the object that you're creating.
@@ -244,7 +244,7 @@ And the other arguments work the same as the subscription.
 Drop create is slightly different:
 
 ```js
-ws.drop.create(id, obj, params, responseHandler, cb)
+ws.drop.create(id, obj, params, responseHandler, callback)
 ```
 
 * id is the flowId for drop.create.
@@ -252,15 +252,15 @@ ws.drop.create(id, obj, params, responseHandler, cb)
 Then we have:
 
 ```js
-ws.flow.read(id, params, responseHandler, cb)
+ws.flow.read(id, params, responseHandler, callback)
 ```
 
 ```js
-ws.flow.update(id, obj, params, responseHandler, cb)
+ws.flow.update(id, obj, params, responseHandler, callback)
 ```
 
 ```js
-ws.flow.delete(id, params, responseHandler, cb)
+ws.flow.delete(id, params, responseHandler, callback)
 ```
 
 The arguments work generally as you would expect for each of these. Track and drop work the same as flow, however, drop takes an array for the id in read, update and delete: [flowId, dropId].
