@@ -20,8 +20,6 @@ var flowthingsWs = {
 };
 
 var crudable = {
-  // Should the callback and the responseHandler be the same
-  // or should they be different?
 
   create: function(obj, params, responseHandler, cb) {
     if (typeof params === 'function') {
@@ -228,10 +226,6 @@ var dropCreate = {
       value: obj
     };
 
-    if (this.objectType === "drop") {
-
-    }
-
     data = JSON.stringify(data);
 
     if (flowthingsWs.readyState === flowthingsWs.OPEN) {
@@ -327,7 +321,7 @@ exports.wsCb = function(err, data, cb) {
 
   flowthingsWs = extend(new WebSocket(url), flowthingsWs);
   flowthingsWs.flow = extend(flowthingsWs.flow, subscribable, crudable);
-  flowthingsWs.drop = extend(flowthingsWs.drop, subscribable, crudable);
+  flowthingsWs.drop = extend(flowthingsWs.drop, subscribable, crudable, dropCreate);
   flowthingsWs.track = extend(flowthingsWs.track, subscribable, crudable);
 
   if (cb) {
