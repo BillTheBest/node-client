@@ -304,6 +304,17 @@ var subscribable = {
 };
 
 
+function heartbeatMessage() {
+  return JSON.stringify({
+    "type": "heartbeat"
+  });
+}
+
+function sendHeartbeat() {
+  flowthingsWs.ping(heartbeatMessage(), {}, true);
+}
+
+
 exports.wsCb = function(err, data, cb) {
   if (err) return console.log(err);
 
@@ -324,11 +335,12 @@ exports.wsCb = function(err, data, cb) {
   flowthingsWs.drop = extend(flowthingsWs.drop, subscribable, crudable, dropCreate);
   flowthingsWs.track = extend(flowthingsWs.track, subscribable, crudable);
 
+  setInterval(sendHeartbeat, 1000);
+
   if (cb) {
     cb(flowthingsWs);
   }
 };
-
 
 exports.connectable = {
   connect: function(data, params, cb) {
