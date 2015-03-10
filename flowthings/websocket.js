@@ -39,6 +39,10 @@ var crudable = {
       msgId = flowthingsWs.baseMsgId; flowthingsWs.baseMsgId += 1;
     }
 
+    if (responseHandler) {
+      flowthingsWs.responseHandlers[msgId] = responseHandler;
+    }
+
     var data = {
       msgId: msgId,
       object: this.objectType,
@@ -60,10 +64,6 @@ var crudable = {
       });
     }
 
-    if (responseHandler) {
-      flowthingsWs.responseHandlers[msgId] = responseHandler;
-    }
-
   },
 
   read: function(id, params, responseHandler, cb) {
@@ -82,6 +82,10 @@ var crudable = {
       msgId = flowthingsWs.baseMsgId; flowthingsWs.baseMsgId += 1;
     }
 
+    if (responseHandler) {
+      flowthingsWs.responseHandlers[msgId] = responseHandler;
+    }
+
     var data = {
       msgId: msgId,
       object: this.objectType,
@@ -97,10 +101,6 @@ var crudable = {
       flowthingsWs.on('open', function open() {
         flowthingsWs.send(data, {}, cb);
       });
-    }
-
-    if (responseHandler) {
-      flowthingsWs.responseHandlers[msgId] = responseHandler;
     }
   },
 
@@ -120,6 +120,10 @@ var crudable = {
       msgId = flowthingsWs.baseMsgId; flowthingsWs.baseMsgId += 1;
     }
 
+    if (responseHandler) {
+      flowthingsWs.responseHandlers[msgId] = responseHandler;
+    }
+
     var data = {
       msgId: msgId,
       object: this.objectType,
@@ -136,10 +140,6 @@ var crudable = {
       flowthingsWs.on('open', function open() {
         flowthingsWs.send(data, {}, cb);
       });
-    }
-
-    if (responseHandler) {
-      flowthingsWs.responseHandlers[msgId] = responseHandler;
     }
   },
 
@@ -159,6 +159,10 @@ var crudable = {
       msgId = flowthingsWs.baseMsgId; flowthingsWs.baseMsgId += 1;
     }
 
+    if (responseHandler) {
+      flowthingsWs.responseHandlers[msgId] = responseHandler;
+    }
+
     var data = {
       msgId: msgId,
       object: this.objectType,
@@ -174,10 +178,6 @@ var crudable = {
       flowthingsWs.on('open', function open() {
         flowthingsWs.send(data, {}, cb);
       });
-    }
-
-    if (responseHandler) {
-      flowthingsWs.responseHandlers[msgId] = responseHandler;
     }
   }
 };
@@ -199,6 +199,10 @@ var dropCreate = {
       msgId = flowthingsWs.baseMsgId; flowthingsWs.baseMsgId += 1;
     }
 
+    if (responseHandler) {
+      flowthingsWs.responseHandlers[msgId] = responseHandler;
+    }
+
     var data = {
       msgId: msgId,
       object: this.objectType,
@@ -215,10 +219,6 @@ var dropCreate = {
       flowthingsWs.on('open', function open() {
         flowthingsWs.send(data, {}, cb);
       });
-    }
-
-    if (responseHandler) {
-      flowthingsWs.responseHandlers[msgId] = responseHandler;
     }
   },
 };
@@ -240,6 +240,14 @@ var subscribable = {
       msgId = flowthingsWs.baseMsgId; flowthingsWs.baseMsgId += 1;
     }
 
+    if (responseHandler) {
+      flowthingsWs.responseHandlers[msgId] = responseHandler;
+    }
+
+    if (dropListener) {
+      flowthingsWs.dropListeners[id] = dropListener;
+    }
+
     var data = {
       msgId: msgId,
       object: 'drop',
@@ -255,14 +263,6 @@ var subscribable = {
       flowthingsWs.on('open', function open() {
         flowthingsWs.send(data, {}, cb);
       });
-    }
-
-    if (responseHandler) {
-      flowthingsWs.responseHandlers[msgId] = responseHandler;
-    }
-
-    if (dropListener) {
-      flowthingsWs.dropListeners[id] = dropListener;
     }
   },
 
@@ -282,6 +282,13 @@ var subscribable = {
       msgId = flowthingsWs.baseMsgId; flowthingsWs.baseMsgId += 1;
     }
 
+    if (responseHandler) {
+      flowthingsWs.responseHandlers[msgId] = responseHandler;
+    }
+
+    // We delete it immediately, regardless of anything else. It'll stop listening even if the platform keeps sending for a little bit.
+    delete flowthingsWs.dropListeners[id];
+
     var data = {
       msgId: msgId,
       object: 'drop',
@@ -298,14 +305,6 @@ var subscribable = {
         flowthingsWs.send(data, {}, cb);
       });
     }
-
-    // We delete it immediately, regardless of anything else. It'll stop listening even if the platform keeps sending for a little bit.
-    delete flowthingsWs.dropListeners[id];
-
-    if (responseHandler) {
-      flowthingsWs.responseHandlers[msgId] = responseHandler;
-    }
-
   }
 };
 
@@ -346,7 +345,7 @@ function setupListener() {
       });
 
       forEach(flowthingsWs.responseHandlers, function(responseHandler, msgId) {
-        if (response.head && response.head.msgId === msgId) {
+        if (response.head && response.head.msgId == msgId) {
           responseHandler(response, msgId, flags);
           toDelete = msgId;
         }
