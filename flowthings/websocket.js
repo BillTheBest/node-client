@@ -321,10 +321,9 @@ function heartbeatMessage() {
 
 function setHeartbeat() {
   setInterval(function() {
-    //flowthingsWs.send(heartbeatMessage());
     flowthingsWs.ping(heartbeatMessage(), {}, true);
-    console.log('ping');
-  }, 1000);
+    console.log('Heartbeat');
+  }, 20000);
 }
 
 function sendHeartbeat() {
