@@ -220,8 +220,6 @@ var dropCreate = {
     if (responseHandler) {
       flowthingsWs.responseHandlers[msgId] = responseHandler;
     }
-
-
   },
 };
 
@@ -235,7 +233,6 @@ var subscribable = {
     } else if (!params) {
       params = {};
     }
-
     var msgId;
     if (params.msgId) {
       msgId = params.msgId;
@@ -337,26 +334,28 @@ function sendHeartbeat() {
 }
 
 function setupListener() {
-  flowthingsWs.on('message', function(data, flags) {
-    var response = JSON.parse(data);
-    var toDelete;
-    if (response.type === "message") {
+  flowthingsWs.on('open', function open() {
+    flowthingsWs.on('message', function(data, flags) {
+      var response = JSON.parse(data);
+      var toDelete;
+
       forEach(flowthingsWs.dropListeners, function(dropListener, flowId) {
         if (response.resource === flowId) {
           dropListener(response, flags);
         }
       });
-    } else {
+
       forEach(flowthingsWs.responseHandlers, function(responseHandler, msgId) {
         if (response.head && response.head.msgId === msgId) {
           responseHandler(response, msgId, flags);
           toDelete = msgId;
         }
       });
-    }
-    if (toDelete) {
-      delete flowthingsWs.responseHandlers[toDelete];
-    }
+
+      if (toDelete) {
+        delete flowthingsWs.responseHandlers[toDelete];
+      }
+    });
   });
 }
 
