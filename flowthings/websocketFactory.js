@@ -2,6 +2,7 @@
 
 var WebSocket = require('ws');
 var extend = require('lodash.assign');
+var forEach = require('lodash.foreach');
 
 
 exports.FlowThingsWs = function(url, params) {
@@ -16,8 +17,12 @@ exports.FlowThingsWs = function(url, params) {
     },
     track: {
       objectType: 'track',
-    }
+    },
+    heartbeat: true,
+    logHeartbeat: false
   };
+
+  flowthingsWs = extend(flowthingsWs, params);
 
   var crudable = {
 
@@ -312,7 +317,10 @@ exports.FlowThingsWs = function(url, params) {
   flowthingsWs._setHeartbeat = function() {
     setInterval(function() {
       flowthingsWs.ping(flowthingsWs._heartbeatMessage(), {}, true);
-      console.log('Heartbeat');
+      if (flowthingsWs.logHeartbeat) {
+        console.log('Flowthings WS Heartbeat');
+      }
+
     }, 20000);
   };
 
@@ -347,7 +355,10 @@ exports.FlowThingsWs = function(url, params) {
 
   flowthingsWs.setMaxListeners(0);
 
-  flowthingsWs._startHeartbeat();
+  if (flowthingsWs.heartbeat) {
+    flowthingsWs._startHeartbeat();
+  }
+
   flowthingsWs._setupListener();
 
 
