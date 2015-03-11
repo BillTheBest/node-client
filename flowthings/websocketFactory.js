@@ -19,7 +19,8 @@ exports.FlowThingsWs = function(url, params) {
       objectType: 'track',
     },
     heartbeat: true,
-    logHeartbeat: false
+    logHeartbeat: false,
+    heartbeatInterval: 20000,
   };
 
   flowthingsWs = extend(flowthingsWs, params);
@@ -320,8 +321,7 @@ exports.FlowThingsWs = function(url, params) {
       if (flowthingsWs.logHeartbeat) {
         console.log('Flowthings WS Heartbeat');
       }
-
-    }, 20000);
+    }, flowthingsWs.heartbeatInterval);
   };
 
   flowthingsWs._startHeartbeat = function() {
