@@ -11,6 +11,13 @@ var wsFactory = require('./websocketFactory.js');
 exports.wsCb = function(err, data, cb) {
   if (err) return console.log(err);
 
+  if (data.head.ok == 'false' || data.head.ok == false) {
+    forEach(data.head.errors, function(err) {
+      console.log(err);
+    });
+    return;
+  }
+
   var opts = this;
   var url = opts.wsHostname;
   var sessionId = data.body.id;
