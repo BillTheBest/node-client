@@ -50,6 +50,9 @@ BaseService.prototype._mkRequest = function(req, cb) {
       if (!err) {
         data = opts.encoder.parse(data);
         opts.wsCb(null, data, cb, opts);
+      } else {
+        data = opts.encoder.parse(data);
+        opts.wsCb(err, data, cb, opts);
       }
     } else if (cb) {
       if (err) {
