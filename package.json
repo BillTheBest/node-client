@@ -1,7 +1,7 @@
 {
   "name": "flowthings",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "Flowthings.io is an agile intelligence platform that is specifically geared towards the Internet of Things. This is our Node Client.",
   "main": "./flowthings/index.js",
   "scripts": {
     "lint": "eslint flowthings || exit 0",
