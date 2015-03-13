@@ -265,4 +265,8 @@ ws.flow.delete(id, params, responseHandler, callback)
 
 The arguments work generally as you would expect for each of these. Track and drop work the same as flow, however, drop takes an array for the id in read, update and delete: [flowId, dropId].
 
-Note: There is currently a bug with how we set listeners, it has the potential to cause a memory leak. We need to fix this, but until then, set as few as possible. If you're setting too many, the system will warn you. We're going to fix this (I promise) in the next week or so.
+Note: there is currently as issue with Websockets. If the WebSocket connection drops, it will just drop. You have to reconnect manually. This will be fixed within the next week or so, but just know that it can drop.
+
+Unless you're running the websocket connection over a slow connection or over an intermittent connection for a long period of time, this probably won't be an issue that you will encounter. I've only encountered it while running WebSocket connections for hours.
+
+However, if you do encounter this issue. I suggest looking into our Flow Agent, which you can find on the [devices page of the Developer's site](https://dev.flowthings.io/#/device/). Hopefully, we'll have this fixed soon and we'll put out a new version to correct this issue.
