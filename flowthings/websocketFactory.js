@@ -317,7 +317,7 @@ exports.FlowThingsWs = function(url, params) {
 
   flowthingsWs._setHeartbeat = function() {
     setInterval(function() {
-      flowthingsWs.ping(flowthingsWs._heartbeatMessage(), {}, true);
+      flowthingsWs.ping(flowthingsWs._heartbeatMessage(), {}, false);
       if (flowthingsWs.logHeartbeat) {
         console.log('Flowthings WS Heartbeat');
       }
