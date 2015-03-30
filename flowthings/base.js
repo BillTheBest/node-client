@@ -36,6 +36,8 @@ BaseService.prototype._mkRequest = function(req, cb) {
     opts.hostname = opts.wsHostname;
   }
 
+  var that = this;
+
   return opts.request({
     creds: opts.creds,
     secure: opts.secure,
@@ -47,12 +49,15 @@ BaseService.prototype._mkRequest = function(req, cb) {
   }, function(err, status, headers, data) {
 
     if (opts.ws) {
+      if (params.reconnect) {
+        opts = extend(opts, {reconnect: true});
+      }
+
       if (!err) {
         data = opts.encoder.parse(data);
-        opts.wsCb(null, data, cb, opts);
+        opts.wsCb(null, data, cb, opts, that);
       } else {
-        data = opts.encoder.parse(data);
-        opts.wsCb(err, data, cb, opts);
+        opts.wsCb(err, null, cb, opts, that);
       }
     } else if (cb) {
       if (err) {
