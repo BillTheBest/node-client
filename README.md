@@ -1,6 +1,14 @@
 flowthings-node-client
 ======================
 
+### Installation
+
+The node client is available via npm:
+
+```shell
+npm install flowthings
+```
+
 ### `flowthings.API(credentials, options)`
 
 Returns a new `API` instance for interacting with the platform.
