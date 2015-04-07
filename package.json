@@ -14,6 +14,7 @@
   },
   "license": "Apache 2.0",
   "dependencies": {
+    "backoff": "^2.4.1",
     "lodash.assign": "^2.4.1",
     "lodash.clone": "^2.4.1",
     "lodash.foreach": "^2.4.1",

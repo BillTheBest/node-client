@@ -1,14 +1,13 @@
 'use strict';
 
-var WebSocket = require('ws');
-var forEach = require('lodash.foreach');
-var partial = require('lodash.partial');
-var extend = require('lodash.assign');
-var map = require('lodash.map');
+var WebSocket = require('ws'),
+    forEach = require('lodash.foreach'),
+    partial = require('lodash.partial'),
+    extend = require('lodash.assign'),
+    map = require('lodash.map'),
+    FlowThingsWs = require('./websocketFactory');
 
-var wsFactory = require('./websocketFactory.js');
-
-exports.wsCb = function(err, data, cb) {
+exports.wsCb = function(err, data, cb, opts, that) {
   if (err) return console.log(err);
 
   if (data.head.ok == 'false' || data.head.ok == false) {
@@ -21,34 +20,33 @@ exports.wsCb = function(err, data, cb) {
   var opts = this;
   var url = opts.wsHostname;
   var sessionId = data.body.id;
+  var reconnectInterval =  1000 * 60;
 
   if (opts.secure) {
     url = 'wss://' + url;
   } else {
     url = 'ws://' + url;
   }
-
   url += '/session/' + sessionId + '/ws';
 
-  var flowthingsWs = new wsFactory.FlowThingsWs(url);
+  if (opts.reconnect) {
+    cb(url);
+  } else {
+    var flowthingsWs = new FlowThingsWs(url, opts);
 
-  if (cb) {
-    cb(flowthingsWs);
+    if (cb) cb(flowthingsWs);
   }
 };
 
 exports.connectable = {
-  connect: function(data, params, cb) {
-    if (typeof data === 'function') {
-      cb = data; data = null; params = null;
-    } else if (typeof params === 'function') {
+  connect: function(params, cb) {
+    if (typeof params === 'function') {
       cb = params; params = null;
     }
 
     return this.request({
       method: 'POST',
       path: '',
-      data: data,
       params: params}, cb);
   }
 };
