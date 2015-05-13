@@ -35,6 +35,7 @@ platform:
 -   `share`
 -   `apiTask`
 -   `mqtt`
+-   `rss`
 
 For documentation on these services, read [Service Methods](#service-methods).
 
