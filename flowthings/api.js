@@ -39,6 +39,7 @@ var defaults = {
     group: partial(base.service, '/group', [mixins.crudable]),
     apiTask: partial(base.service, '/api-task', [mixins.crudable]),
     mqtt: partial(base.service, '/mqtt', [mixins.crudable]),
+    rss: partial(base.service, '/rss', [mixins.crudable]),
     identity: partial(base.service, '/identity', [mixins.findable]),
     share: partial(base.service, '/share', [mixins.findable, mixins.creatable, mixins.deletable]),
     token: partial(base.service, '/token', [mixins.findable, mixins.creatable, mixins.deletable]),
