@@ -77,9 +77,13 @@ BaseService.prototype._mkRequest = function(req, cb) {
 };
 
 BaseService.prototype.request = function(req, cb) {
-  return this.options.transform
-    ? this.options.transform(this.options, this._mkRequest.bind(this), req, cb)
-    : this._mkRequest(req, cb);
+  if (this.options.ws) {
+    return this._mkRequest(req, cb);
+  } else {
+    return this.options.transform
+      ? this.options.transform(this.options, this._mkRequest.bind(this), req, cb)
+      : this._mkRequest(req, cb);
+  }
 };
 
 exports.service = function(path, mixins, opts) {
