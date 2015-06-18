@@ -1,6 +1,8 @@
 flowthings-node-client
 ======================
 
+[![NPM](https://nodei.co/npm/flowthings.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/flowthings/)
+
 ### Installation
 
 The node client is available via npm:
