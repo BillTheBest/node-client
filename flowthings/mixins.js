@@ -85,6 +85,16 @@ exports.deletable = {
   }
 };
 
+exports.aggregatable = {
+  aggregate: function(data, params, cb) {
+    if (typeof params === 'function') {
+      cb = params; params = null;
+    }
+
+    return this.request({ method: 'POST', path: '/aggregate', data: data, params: params }, cb);
+  }
+}
+
 exports.crudable = extend({}, exports.findable,
                               exports.creatable,
                               exports.updatable,

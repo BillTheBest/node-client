@@ -115,6 +115,22 @@ parameterized by the Flow id.
 api.drop('<flow_id>').find({ limit: 10 });
 ```
 
+#### `drop(flowId).aggregate(data, params?, callback)`
+
+Drops also support our [aggregation endpoint](https://flowthings.io/docs/flow-drop-aggregate).
+
+```js
+api.drop('<flow_id>').aggregate({
+  "filter":"",
+  "groupBy":[],
+  "output": ["$count", "$avg:foo"],
+  "rules":{}
+}, function(err, res) {
+  if (err) console.log("error: ", err)
+  if (res) console.log("res: ", res)
+})
+```
+
 **Note:** Not all services support all the methods. `share`s and `token`s are
 immutable, and so do not support `update`, `updateMany`, and `save`.
 `identity` only supports `read`, `readMany`, `findMany`, and `find`.
