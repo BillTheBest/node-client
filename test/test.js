@@ -220,4 +220,23 @@ describe('requests', function() {
       data: null
     }));
   });
+
+  it('should support aggregations', function() {
+    TestAPI().drop('foo').aggregate({
+      'filter': '',
+      'groupBy': [],
+      'output': ['$count', '$avg:foo'],
+      'rules': {}
+    }, defaultCallback({
+      method: 'POST',
+      path: '/v0.1/test/drop/foo/aggregate',
+      params: {},
+      data: {
+        'filter': '',
+        'groupBy': [],
+        'output': ['$count', '$avg:foo'],
+        'rules': {}
+      }
+    }))
+  })
 });

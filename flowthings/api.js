@@ -34,7 +34,7 @@ var defaults = {
   services: {
     root: partial(base.service, '', []),
     flow: partial(base.service, '/flow', [mixins.crudable]),
-    drop: partial(base.serviceFactory, '/drop', [mixins.crudable]),
+    drop: partial(base.serviceFactory, '/drop', [mixins.crudable, mixins.aggregatable]),
     track: partial(base.service, '/track', [mixins.crudable]),
     group: partial(base.service, '/group', [mixins.crudable]),
     apiTask: partial(base.service, '/api-task', [mixins.crudable]),
