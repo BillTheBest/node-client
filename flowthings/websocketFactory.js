@@ -324,7 +324,7 @@ function baseWs(flowthingsWs, object, type, values, params) {
 
   data = JSON.stringify(data);
 
-  if (flowthingsWs.ws.readystate === flowthingsWs.ws.OPEN) {
+  if (flowthingsWs.ws.readyState === flowthingsWs.ws.OPEN) {
     flowthingsWs.send(data, {}, params.cb);
   } else {
     flowthingsWs.once('open', function open() {
