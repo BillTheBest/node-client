@@ -51,7 +51,7 @@ FlowThingsWs.prototype._reconnect = function() {
   var self = this;
   var api = ft.API(self.options.creds);
 
-// When ws is closed, we can reconnect and nuke the old ws.
+  // When ws is closed, we can reconnect and nuke the old ws.
   api.webSocket.connect({reconnect: true}, function(url) {
     self.ws.removeAllListeners();
     self.ws.terminate();
@@ -90,8 +90,10 @@ FlowThingsWs.prototype._reconnectionHandler = function() {
     wsBackoff.reset();
   });
 
-  this.on('close', function() {
-    wsBackoff.backoff();
+  this.on('close', function(code, message) {
+    if (message !== "manuallyClosing") {
+      wsBackoff.backoff();
+    }
   });
 
   this.on('error', function() {
@@ -140,7 +142,7 @@ FlowThingsWs.prototype._heartbeatMessage = function() {
 
 FlowThingsWs.prototype._setHeartbeat = function() {
   var self = this;
-  setInterval(function() {
+  this.heartbeatInterval = setInterval(function() {
     self.ws.ping(self._heartbeatMessage(), {}, true);
     if (self.logHeartbeat) {
       console.log('Flowthings WS Heartbeat');
@@ -157,6 +159,10 @@ FlowThingsWs.prototype._startHeartbeat = function() {
       self._setHeartbeat();
     });
   }
+};
+
+FlowThingsWs.prototype.close = function() {
+  this.ws.close(undefined, "manuallyClosing");
 };
 
 FlowThingsWs.prototype._setupListener = function() {
@@ -176,6 +182,9 @@ FlowThingsWs.prototype._setupListener = function() {
   });
 
   this.ws.on('close', function(code, message) {
+    if (message === "manuallyClosing") {
+      clearInterval(this.heartbeatInterval)
+    }
     self.emit('close', code, message);
   });
 
@@ -184,7 +193,7 @@ FlowThingsWs.prototype._setupListener = function() {
   });
 
   this.ws.on('ping', function(data, flags) {
-    self.emit('ping', data, flags);
+    self.emit('ping', data, flags || {});
   });
 
   this.ws.on('pong', function(data, flags) {
