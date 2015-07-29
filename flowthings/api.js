@@ -10,6 +10,7 @@ var base = require('./base');
 var mixins = require('./mixins');
 var util = require('./util');
 var wsUtils = require('./websocket.js');
+var libraryVersion = require('../package.json').version
 
 function API(creds, opts) {
   if (!(this instanceof API)) {
@@ -31,6 +32,7 @@ var defaults = {
   wsHostname: 'ws.flowthings.io',
   version: '0.1',
   encoder: JSON,
+  userAgent: "Flowthings Node Client " + libraryVersion,
   services: {
     root: partial(base.service, '', []),
     flow: partial(base.service, '/flow', [mixins.crudable]),

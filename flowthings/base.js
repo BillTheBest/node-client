@@ -45,7 +45,8 @@ BaseService.prototype._mkRequest = function(req, cb) {
     method: req.method || 'GET',
     path: this._mkPath(req),
     data: this._mkData(req),
-    params: params
+    params: params,
+    userAgent: opts.userAgent,
   }, function(err, status, headers, data) {
 
     if (opts.ws) {
