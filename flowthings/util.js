@@ -11,7 +11,8 @@ exports.mkHeaders = function(opts) {
     'Accept': '*/*',
     'Content-Type': 'application/json; charset="UTF-8"',
     'X-Auth-Account': opts.creds.account,
-    'X-Auth-Token': opts.creds.token
+    'X-Auth-Token': opts.creds.token,
+    'User-Agent': opts.userAgent
   };
 };
 
