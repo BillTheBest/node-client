@@ -268,13 +268,13 @@ ws.flow.create(obj, params, responseHandler, callback)
 
 And the other arguments work the same as the subscription.
 
-Drop create is slightly different:
+Drop create is slightly different, just like in the normal API:
 
 ```js
-ws.drop.create(id, obj, params, responseHandler, callback)
+ws.drop(flowId).create(obj, params, responseHandler, callback)
 ```
 
-* id is the flowId for drop.create.
+All of the drop functions are just like they are in the normal API.
 
 Then we have:
 

@@ -19,6 +19,8 @@ var defaults = {
 function FlowThingsWs(url, params) {
   EventEmitter.call(this);
 
+  var self = this;
+
   this.url = url;
   this.options = extend(clone(defaults), clone(params));
 
@@ -26,7 +28,16 @@ function FlowThingsWs(url, params) {
 
   this.flow = { objectType: 'flow' };
   this.track = { objectType: 'track' };
-  this.drop = { objectType: 'drop' };
+  this.drop = function(flowId) {
+    var dropObject = {
+      objectType: 'drop',
+    };
+    if (flowId) {
+      dropObject.flowId = flowId;
+    }
+
+    return extend(dropObject, crudable(self), dropCreate(self));
+  }
 
   // When ws is opened, we will subscribe to each of these.
   this.subscriptions = {};
@@ -91,7 +102,7 @@ FlowThingsWs.prototype._reconnectionHandler = function() {
   });
 
   this.on('close', function(code, message) {
-    if (message !== "manuallyClosing") {
+    if (message !== 'manuallyClosing') {
       wsBackoff.backoff();
     }
   });
@@ -103,7 +114,6 @@ FlowThingsWs.prototype._reconnectionHandler = function() {
 
 FlowThingsWs.prototype._expand = function() {
   this.flow = extend(this.flow, subscribable(this), crudable(this));
-  this.drop = extend(this.drop, crudable(this), dropCreate(this));
   this.track = extend(this.track, crudable(this));
 };
 
@@ -136,7 +146,7 @@ FlowThingsWs.prototype._resubscribe = function() {
 
 FlowThingsWs.prototype._heartbeatMessage = function() {
   return JSON.stringify({
-    "type": "heartbeat"
+    'type': 'heartbeat'
   });
 };
 
@@ -162,7 +172,7 @@ FlowThingsWs.prototype._startHeartbeat = function() {
 };
 
 FlowThingsWs.prototype.close = function() {
-  this.ws.close(undefined, "manuallyClosing");
+  this.ws.close(undefined, 'manuallyClosing');
 };
 
 FlowThingsWs.prototype._setupListener = function() {
@@ -174,15 +184,15 @@ FlowThingsWs.prototype._setupListener = function() {
 
     self.emit('message', data, flags);
 
-    if (response.type === "message") {
-      self.emit(response.resource, response, flags);
+    if (response.type === 'message') {
+      self.emit(response.resource, response.value, flags);
     } else if (response.head && response.head.msgId) {
       self.emit(response.head.msgId, response, response.head.msgId, flags);
     }
   });
 
   this.ws.on('close', function(code, message) {
-    if (message === "manuallyClosing") {
+    if (message === 'manuallyClosing') {
       clearInterval(this.heartbeatInterval)
     }
     self.emit('close', code, message);
@@ -218,7 +228,7 @@ function crudable(flowthingsWs) {
         params = {};
       }
 
-      baseWs(flowthingsWs, this.objectType, "create", {value: obj},
+      baseWs(flowthingsWs, this.objectType, 'create', {value: obj},
              {msgId: params.msgId, responseHandler: responseHandler, cb: cb});
     },
 
@@ -229,7 +239,9 @@ function crudable(flowthingsWs) {
         params = {};
       }
 
-      baseWs(flowthingsWs, this.objectType, "find", {id: id},
+      id = fixDropId(id, this);
+
+      baseWs(flowthingsWs, this.objectType, 'find', {id: id},
              {msgId: params.msgId, responseHandler: responseHandler, cb: cb});
     },
 
@@ -240,7 +252,9 @@ function crudable(flowthingsWs) {
         params = {};
       }
 
-      baseWs(flowthingsWs, this.objectType, "update", {id: id, value: obj},
+      id = fixDropId(id, this);
+
+      baseWs(flowthingsWs, this.objectType, 'update', {id: id, value: obj},
              {msgId: params.msgId, responseHandler: responseHandler, cb: cb});
     },
 
@@ -251,22 +265,41 @@ function crudable(flowthingsWs) {
         params = {};
       }
 
-      baseWs(flowthingsWs, this.objectType, this.objectType, "delete", {id: id},
+      id = fixDropId(id, this);
+
+      baseWs(flowthingsWs, this.objectType, this.objectType, 'delete', {id: id},
              {msgId: params.msgId, responseHandler: responseHandler, cb: cb});
     }
   };
 }
 
+function fixDropId(id, self) {
+  if (self.objectType != 'drop') {
+    return id;
+  }
+
+  if (Array.isArray(id)) {
+    if (id.length != 2) {
+      id = [self.flowId].concat(id)
+    }
+  } else {
+    id = [self.flowId, id];
+  }
+
+  return id;
+}
+
 function dropCreate(flowthingsWs) {
   return {
-    create: function(id, obj, params, responseHandler, cb) {
+    create: function(obj, params, responseHandler, cb) {
       if (typeof params === 'function') {
         cb = responseHandler; responseHandler = params; params = {};
       } else if (!params) {
         params = {};
       }
 
-      baseWs(flowthingsWs, this.objectType, "create", {flowId: id, value: obj},
+      baseWs(flowthingsWs, this.objectType, 'create',
+             {flowId: this.flowId, value: obj},
              {msgId: params.msgId, responseHandler: responseHandler, cb: cb});
     },
   };
@@ -288,7 +321,7 @@ function subscribable(flowthingsWs) {
 
       flowthingsWs.subscriptions[id] = dropListener;
 
-      baseWs(flowthingsWs, "drop", "subscribe", {flowId: id},
+      baseWs(flowthingsWs, 'drop', 'subscribe', {flowId: id},
              {msgId: params.msgId, responseHandler: responseHandler, cb: cb});
     },
 
@@ -304,7 +337,7 @@ function subscribable(flowthingsWs) {
       flowthingsWs.removeAllListeners(id);
       delete flowthingsWs.subscriptions[id];
 
-      baseWs(flowthingsWs, "drop", "unsubscribe", {flowId: id},
+      baseWs(flowthingsWs, 'drop', 'unsubscribe', {flowId: id},
              {msgId: params.msgId, responseHandler: responseHandler, cb: cb});
     }
   };
