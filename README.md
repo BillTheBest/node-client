@@ -232,7 +232,14 @@ The callback takes one argument, which gives you access to the websocket object.
 
 api.webSocket.connect(function(flowthingsWs) {
 
-  // To subscribe to a flow, you could use the built in ws methods.
+  // To subscribe to a flow, you use the subscribe method
+  flowthingsWs.flow.subscribe("f54f8c0840cf2738763fd8a56", function(drop){
+  console.log("drop", drop)
+  }, function() {
+    console.log('connected')
+  })
+
+
   flowthingsWs.on('open', function open() {
     flowthingsWs.send('{"msgId": "my-request","object": "drop","type": "subscribe","flowId": "f54f8c0840cf2738763fd8a56"}');
   });
@@ -248,9 +255,7 @@ Flow, track and drop each have CRUD methods on them. Flow has an additional meth
 
 The methods take the following arguments:
 
-```js
-ws.flow.subscribe(id, params, dropListener, responseHandler, callback)
-```
+#### `ws.flow.subscribe(id, params, dropListener, responseHandler, callback)`
 
 * id is the id of the flow you're subscribing to.
 * params are various parameters you can set (the only important one for now is msgId).
@@ -260,9 +265,11 @@ ws.flow.subscribe(id, params, dropListener, responseHandler, callback)
 
 The other methods are similar:
 
-```js
-ws.flow.create(obj, params, responseHandler, callback)
-```
+#### `ws.flow.subscribe(id, params, responseHandler, callback)`
+
+This is the sister to subscriptions. It will start
+
+#### `ws.flow.create(obj, params, responseHandler, callback)`
 
 * obj is the object that you're creating.
 
@@ -270,27 +277,19 @@ And the other arguments work the same as the subscription.
 
 Drop create is slightly different, just like in the normal API:
 
-```js
-ws.drop(flowId).create(obj, params, responseHandler, callback)
-```
+#### `ws.drop(flowId).create(obj, params, responseHandler, callback)`
 
-All of the drop functions are just like they are in the normal API.
+All of the drop functions behave in the same way
 
 Then we have:
 
-```js
-ws.flow.read(id, params, responseHandler, callback)
-```
+#### `ws.flow.read(id, params, responseHandler, callback)`
 
-```js
-ws.flow.update(id, obj, params, responseHandler, callback)
-```
+#### `ws.flow.update(id, obj, params, responseHandler, callback)`
 
-```js
-ws.flow.delete(id, params, responseHandler, callback)
-```
+#### `ws.flow.delete(id, params, responseHandler, callback)`
 
-The arguments work generally as you would expect for each of these. Track and drop work the same as flow, however, drop takes an array for the id in read, update and delete: [flowId, dropId].
+The arguments work generally as you would expect for each of these. Track works the same as flows.
 
 Note: Websockets will reconnect if it loses the connection. However, it's suggested that you also enable some logic outside of the library to ensure connection as well.
 
