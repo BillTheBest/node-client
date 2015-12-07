@@ -185,8 +185,10 @@ FlowThingsWs.prototype._setupListener = function() {
     self.emit('message', data, flags);
 
     if (response.type === 'message') {
+      // drop
       self.emit(response.resource, response.value, flags);
     } else if (response.head && response.head.msgId) {
+      // responseHandler
       self.emit(response.head.msgId, response, response.head.msgId, flags);
     }
   });

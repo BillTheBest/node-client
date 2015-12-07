@@ -217,38 +217,30 @@ You can enable a websockets session with the websockets connect method,
 as you would with any other service.
 
 ```js
-
 api.webSocket.connect()
-
 ```
 
 The connection method doesn't return anything.
 
 Rather, you can interface with the websocket connection through a callback.
 
-The callback takes one argument, which gives you access to the websocket object. We've used the [ws](https://github.com/websockets/ws) library to handle our websockets, so you can use any of their methods that you wish. But, we've also added our own convenience methods.
+The callback takes one argument, which gives you access to the websocket object. We've used the [ws](https://github.com/websockets/ws) library to handle our websockets connections. But we've abstracted it away with our own higher level logic. We handle reconnection and nearly everything else.
 
 ```js
-
 api.webSocket.connect(function(flowthingsWs) {
 
   // To subscribe to a flow, you use the subscribe method
   flowthingsWs.flow.subscribe("f54f8c0840cf2738763fd8a56", function(drop){
-  console.log("drop", drop)
+    console.log("drop", drop)
   }, function() {
     console.log('connected')
   })
 
-
-  flowthingsWs.on('open', function open() {
-    flowthingsWs.send('{"msgId": "my-request","object": "drop","type": "subscribe","flowId": "f54f8c0840cf2738763fd8a56"}');
-  });
-
-  // However, you could also use our convenience methods.
-  flowthingsWs.flow.subscribe("f54f8c0840cf2738763fd8a56")
+  flowthingsWs.drop("f54f8c0840cf2738763fd8a56").create({elems:{"name": "drop"}}, function() {
+      console.log('drop created')
+  })
 
 })
-
 ```
 
 Flow, track and drop each have CRUD methods on them. Flow has an additional method to subscribe to the flow over websockets.
