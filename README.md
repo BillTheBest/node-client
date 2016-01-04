@@ -1,6 +1,10 @@
 flowthings-node-client
 ======================
 
+The node library for [flowthings.io](https://flowthings.io/).
+
+See the documentation for the platform [here](https://flowthings.io/docs/index). And, if you have futher questions, don't hesitate to go to our [support forum](https://flowthings.io/support).
+
 [![NPM](https://nodei.co/npm/flowthings.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/flowthings/)
 
 ### Installation
