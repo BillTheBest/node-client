@@ -15,14 +15,14 @@
   "license": "Apache 2.0",
   "dependencies": {
     "backoff": "^2.4.1",
-    "lodash.assign": "^2.4.1",
-    "lodash.clone": "^2.4.1",
-    "lodash.foreach": "^2.4.1",
-    "lodash.isregexp": "^2.4.1",
-    "lodash.isstring": "^2.4.1",
-    "lodash.map": "^2.4.1",
-    "lodash.partial": "^2.4.1",
-    "ws": "^0.8.1"
+    "lodash.assign": "^3.2.0",
+    "lodash.clone": "^3.0.3",
+    "lodash.foreach": "^3.0.3",
+    "lodash.isregexp": "^3.0.3",
+    "lodash.isstring": "^3.0.1",
+    "lodash.map": "^3.1.4",
+    "lodash.partial": "^3.1.1",
+    "ws": "^1.0.1"
   },
   "devDependencies": {
     "chai": "^2.0.0",
