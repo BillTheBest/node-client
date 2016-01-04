@@ -251,9 +251,9 @@ The methods take the following arguments:
 
 * id is the id of the flow you're subscribing to.
 * params are various parameters you can set (the only important one for now is msgId).
-* dropListener is a callback function, we'll execute it when messages (drops) come in from the subscribed to flow.
-* callback is the callback that is executed after the data is sent, but before anything is recieved.
-* responseHandler will listen for an incomming message from the platform that will tell you if the subscription has succeeded or failed.
+* dropListener(drop) is a callback function, we'll execute it when messages (drops) come in from the subscribed to flow.
+* responseHandler(response, response.head.msgId, flags) will listen for an incomming message from the platform that will tell you if the subscription has succeeded or failed.
+* callback() is the callback that is executed after the data is sent, but before anything is recieved.
 
 The other methods are similar:
 
