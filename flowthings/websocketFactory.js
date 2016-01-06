@@ -4,6 +4,7 @@ var WebSocket = require('ws'),
     extend = require('lodash.assign'),
     forEach = require('lodash.foreach'),
     clone = require('lodash.clone'),
+    size = require('lodash.size'),
     ft = require('./api'),
     EventEmitter = require('events').EventEmitter,
     inherits = require('util').inherits,
@@ -16,13 +17,16 @@ var defaults = {
   heartbeatInterval: 20000,
 };
 
-function FlowThingsWs(url, params) {
+function FlowThingsWs(url, params, service) {
   EventEmitter.call(this);
 
   var self = this;
 
   this.url = url;
-  this.options = extend(clone(defaults), clone(params));
+  this.options = extend({}, clone(defaults), clone(params));
+  // the ws service is passed in from above,
+  // so that we can easily reconnect without reconstructing the whole api
+  this.service = service;
 
   this.baseMsgId = this.options.baseMsgId;
 
@@ -58,22 +62,28 @@ FlowThingsWs.prototype._connect = function(url) {
   this._reconnectionHandler();
 };
 
-FlowThingsWs.prototype._reconnect = function() {
+FlowThingsWs.prototype._reconnect = function(cb) {
   var self = this;
-  var api = ft.API(self.options.creds);
+  ///var api = ft.API(this.options.creds);
+  self.emit('reconnecting');
 
   // When ws is closed, we can reconnect and nuke the old ws.
-  api.webSocket.connect({reconnect: true}, function(url) {
+  this.service.connect({reconnect: true}, function(url, err) {
+    if (err) {
+      console.log('err: ', err)
+      cb();
+      return;
+    }
     self.ws.removeAllListeners();
     self.ws.terminate();
     delete self.ws;
 
     self.ws = new WebSocket(url);
 
-    self._resubscribe();
     self._setupListener();
     self._startHeartbeat();
     self.ws.setMaxListeners(0);
+    self._resubscribe();
 
     self.emit('reconnect');
   });
@@ -90,9 +100,12 @@ FlowThingsWs.prototype._reconnectionHandler = function() {
 
   wsBackoff.on('ready', function(number, delay) {
     try {
-      self._reconnect();
+      self._reconnect(function() {
+        wsBackoff.backoff();
+      });
     }
     catch(e) {
+      console.log('e: ', e)
       wsBackoff.backoff();
     }
   });
@@ -138,9 +151,15 @@ FlowThingsWs.prototype._resubscribe = function() {
   // if one is subscribed to while it's in the process of reconnecting,
   // we don't wanna connect to it twice.
   var subs = clone(self.subscriptions);
+  var subTracker = {};
 
   forEach(subs, function(dropListener, flowId, collection) {
-    self.flow.subscribe(flowId);
+    self.flow.subscribe(flowId, dropListener, function() {
+      subTracker[flowId] = flowId;
+      if (size(subTracker) == size(subs)) {
+        self.emit('resubscribed')
+      }
+    });
   });
 };
 

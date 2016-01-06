@@ -32,7 +32,7 @@ var defaults = {
   wsHostname: 'ws.flowthings.io',
   version: '0.1',
   encoder: JSON,
-  userAgent: "Flowthings Node Client " + libraryVersion,
+  userAgent: 'Flowthings Node Client ' + libraryVersion,
   services: {
     root: partial(base.service, '', []),
     flow: partial(base.service, '/flow', [mixins.crudable]),
@@ -94,6 +94,7 @@ function promisify(P) {
     });
   };
 }
+
 
 exports.API = API;
 exports.defaults = defaults;

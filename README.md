@@ -220,15 +220,22 @@ Note: As of yet, we do not support promises through the websockets library.
 You can enable a websockets session with the websockets connect method,
 as you would with any other service.
 
-```js
-api.webSocket.connect()
-```
+#### `api.webSocket.connect()`
 
 The connection method doesn't return anything.
 
 Rather, you can interface with the websocket connection through a callback.
 
-The callback takes one argument, which gives you access to the websocket object. We've used the [ws](https://github.com/websockets/ws) library to handle our websockets connections. But we've abstracted it away with our own higher level logic. We handle reconnection and nearly everything else.
+The callback takes two arguments.
+
+``` js
+api.webSocket.connect(function(flowthingsWs, err) {
+
+})
+```
+The first argumen gives you access to the websocket object. We've used the [ws](https://github.com/websockets/ws) library to handle our websockets connections. But we've abstracted it away with our own higher level logic. We handle reconnection and nearly everything else.
+
+The second argument is an error argument. This is a reversal from above, where the error argument is usually the first argument. I apologize for the reversal, but generally you'll only get an error here if you put in the wrong credentials.
 
 ```js
 api.webSocket.connect(function(flowthingsWs) {

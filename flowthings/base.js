@@ -6,9 +6,18 @@ var WebSocket = require('ws');
 var wsUtil = require('./websocket.js');
 var clone = require('lodash.clone');
 
-function BaseService(path, opts) {
+function BaseService(path, opts, ws) {
   this.path = path;
   this.options = opts;
+
+  // for websockets, we don't want to mutate the opts argument,
+  // but we do need to pass in the ws to the opts argument.
+  // so we create a new opts object!
+  if (ws) {
+    this.ws = true;
+    this.options = extend({}, opts);
+    this.options.ws = true;
+  }
 }
 
 BaseService.prototype._mkPath = function(req) {
@@ -36,7 +45,7 @@ BaseService.prototype._mkRequest = function(req, cb) {
     opts.hostname = opts.wsHostname;
   }
 
-  var that = this;
+  var self = this;
 
   return opts.request({
     creds: opts.creds,
@@ -56,9 +65,9 @@ BaseService.prototype._mkRequest = function(req, cb) {
 
       if (!err) {
         data = opts.encoder.parse(data);
-        opts.wsCb(null, data, cb, opts, that);
+        wsUtil.wsCb(null, data, cb, opts, self);
       } else {
-        opts.wsCb(err, null, cb, opts, that);
+        wsUtil.wsCb(err, null, cb, opts, self);
       }
     } else if (cb) {
       if (err) {
@@ -78,7 +87,7 @@ BaseService.prototype._mkRequest = function(req, cb) {
 };
 
 BaseService.prototype.request = function(req, cb) {
-  if (this.options.ws) {
+  if (this.ws) {
     return this._mkRequest(req, cb);
   } else {
     return this.options.transform
@@ -98,10 +107,5 @@ exports.serviceFactory = function(path, mixins, opts) {
 };
 
 exports.webSocketService = function(path, mixins, opts) {
-  var cloneOpts = clone(opts, true);
-
-  cloneOpts.ws = true;
-  cloneOpts.wsCb = wsUtil.wsCb;
-
-  return extend.apply(null, [new BaseService(path, cloneOpts)].concat(mixins));
+  return extend.apply(null, [new BaseService(path, opts, true)].concat(mixins));
 };
