@@ -251,6 +251,18 @@ api.webSocket.connect(function(flowthingsWs) {
       console.log('drop created')
   })
 
+  // you can also use paths instead of flowIds
+  flowthingsWs.flow.subscribe("/my/flow/path", function(drop){
+    console.log("drop", drop)
+  }, function() {
+    console.log('connected')
+  })
+
+  flowthingsWs.drop("/my/flow/path").create({elems:{"name": "drop"}}, function() {
+      console.log('drop created')
+  })
+
+
 })
 ```
 
@@ -260,7 +272,7 @@ The methods take the following arguments:
 
 #### `ws.flow.subscribe(id, params, dropListener, responseHandler, callback)`
 
-* id is the id of the flow you're subscribing to.
+* id is the id of the flow you're subscribing to. You can also use a path instead of a flowId.
 * params are various parameters you can set (the only important one for now is msgId).
 * dropListener(drop) is a callback function, we'll execute it when messages (drops) come in from the subscribed to flow.
 * responseHandler(response, response.head.msgId, flags) will listen for an incomming message from the platform that will tell you if the subscription has succeeded or failed.
@@ -278,11 +290,11 @@ This is the sister to subscriptions. It will start
 
 And the other arguments work the same as the subscription.
 
-Drop create is slightly different, just like in the normal API:
+Drop create is slightly different, similar to the normal API. You can also substitute the path for the flowId.
 
 #### `ws.drop(flowId).create(obj, params, responseHandler, callback)`
 
-All of the drop functions behave in the same way
+All of the drop functions behave in the same way.
 
 Then we have:
 
