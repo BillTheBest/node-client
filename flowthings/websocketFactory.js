@@ -205,7 +205,11 @@ FlowThingsWs.prototype._setupListener = function() {
 
     if (response.type === 'message') {
       // drop
-      self.emit(response.resource, response.value, flags);
+      if (self.subscriptions[response.resource]) {
+        self.emit(response.resource, response.value, flags);
+      } else if (self.subscriptions[response.value.path]) {
+        self.emit(response.value.path, response.value, flags);
+      }
     } else if (response.head && response.head.msgId) {
       // responseHandler
       self.emit(response.head.msgId, response, response.head.msgId, flags);
@@ -310,17 +314,22 @@ function fixDropId(id, self) {
   return id;
 }
 
+// can I roll this into the normal create?
 function dropCreate(flowthingsWs) {
   return {
-    create: function(obj, params, responseHandler, cb) {
+    create: function(drop, params, responseHandler, cb) {
       if (typeof params === 'function') {
         cb = responseHandler; responseHandler = params; params = {};
       } else if (!params) {
         params = {};
       }
 
+      if (this.flowId.charAt(0) === '/') {
+        drop.path = this.flowId;
+      }
+
       baseWs(flowthingsWs, this.objectType, 'create',
-             {flowId: this.flowId, value: obj},
+             {flowId: this.flowId, value: drop},
              {msgId: params.msgId, responseHandler: responseHandler, cb: cb});
     },
   };
@@ -379,9 +388,21 @@ function baseWs(flowthingsWs, object, type, values, params) {
 
   var data = { msgId: msgId, object: object, type: type };
 
-  if (values.flowId) data.flowId = values.flowId;
+  if (values.flowId) {
+    if (values.flowId.charAt(0) === '/') {
+      data.path = values.flowId;
+    } else {
+      data.flowId = values.flowId;
+    }
+  }
 
-  if (values.id) data.id = values.id;
+  if (values.id) {
+    if (values.id.charAt(0) === '/') {
+      data.path = values.id;
+    } else {
+      data.id = values.id;
+    }
+  }
 
   if (values.value) data.value = values.value;
 
